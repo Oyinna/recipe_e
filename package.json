@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon serve",
-    "test": "cross-env NODE_ENV=test mocha",
+    "testMocha": "cross-env NODE_ENV=test mocha ./test/**/*.js --exit",
+    "coverageMocha": "nyc --reporter=text npm run test ",
     "lint": "eslint ./",
     "seed": "node database/seed/index",
     "seed:rollback": "node database/seed/index --rollback"
@@ -35,7 +36,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.15",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "nyc": "^15.1.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
@@ -44,6 +46,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "mocha": "^8.2.1"
   }
 }

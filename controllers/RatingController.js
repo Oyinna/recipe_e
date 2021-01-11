@@ -1,5 +1,5 @@
-const Rating = require('../database/dbfunctions/rating');
-const Recipes = require('../database/dbfunctions/recipes');
+const Rating = require('../database/services/rating');
+const Recipes = require('../database/services/recipes');
 
 const RatingController = {
 // Create and Save a new Recipes

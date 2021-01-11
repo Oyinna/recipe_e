@@ -1,4 +1,4 @@
-const Recipes = require('../database/dbfunctions/recipes');
+const Recipes = require('../database/services/recipes');
 
 const RecipesController = {
 // Retrieve and return all recipes from the database.
