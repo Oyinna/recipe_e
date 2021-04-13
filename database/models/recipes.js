@@ -3,21 +3,21 @@ const mongoose = require('../dbConection');
 const { Schema } = mongoose;
 
 const RecipesSchema = new Schema({
-  Name: {
+  name: {
     type: String,
     required: true,
   },
-  PrepTime: {
+  prepTime: {
     type: Date,
     default: new Date(),
   },
-  Difficulty: {
+  difficulty: {
     type: Number,
     min: 1,
     max: 3,
     required: true,
   },
-  Vegetarian: {
+  vegetarian: {
     type: Boolean,
     required: true,
   },

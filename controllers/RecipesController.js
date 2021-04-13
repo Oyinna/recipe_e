@@ -1,39 +1,10 @@
-const Recipes = require('../database/dbfunctions/recipes');
+const Recipes = require('../database/services/recipes');
 
 const RecipesController = {
-// Retrieve and return all recipes from the database.
+  // Retrieve and return all recipes from the database.
   getAll: async (req, res) => {
     try {
-      let { search } = req.query;
-      if (!search) {
-        search = '';
-      }
-
-      // pagination
-      const page = parseInt(req.query.page, 10);
-      const limit = parseInt(req.query.limit, 10);
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-
-      const results = {};
-      const totalRecipes = await Recipes.totalNo();
-
-      if (endIndex < totalRecipes) {
-        results.next = {
-          page: page + 1,
-          limit,
-        };
-      }
-
-      if (startIndex > 0) {
-        results.previous = {
-          page: page - 1,
-          limit,
-        };
-      }
-
-      results.results = await Recipes.allRecipes(limit, startIndex, search);
+      const results = await Recipes.allRecipes();
 
       return res.status(200).send({
         success: true,
@@ -42,7 +13,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: err.message || 'Some error occurred while retrieving recipes.',
+        message: 'Some error occurred while retrieving recipes.',
       });
     }
   },
@@ -52,46 +23,40 @@ const RecipesController = {
     try {
       // define variables
       const {
-        Name, Difficulty, Vegetarian,
+        name, difficulty, vegetarian,
       } = req.body;
 
       // validate vegetarian
-      if (typeof Vegetarian !== 'boolean') {
+      if (typeof vegetarian !== 'boolean') {
         return res.status(400).send({
           success: false,
-          message: 'Vegetarian field should be boolean',
+          message: 'vegetarian field should be boolean',
         });
       }
-      // validate Name
-      if (!req.body.Name) {
+      // validate name
+      if (!req.body.name) {
         return res.status(400).send({
           success: false,
-          message: 'Name field can not be empty',
+          message: 'name field can not be empty',
         });
       }
 
-      // validate Difficulty
-      if ((typeof Difficulty !== 'number') || (Difficulty <= 0) || (Difficulty > 3)) {
+      // validate difficulty
+      if ((typeof difficulty !== 'number') || (difficulty <= 0) || (difficulty > 3)) {
         return res.status(400).send({
           success: false,
-          message: 'Difficulty field should be a number',
+          message: 'difficulty field should be a number',
         });
       }
 
       const recipesDetail = {
-        Name,
-        Difficulty,
-        Vegetarian,
+        name,
+        difficulty,
+        vegetarian,
       };
 
       // Save user in the database
       const recipes = await Recipes.saveRecipes(recipesDetail);
-      if (!recipes) {
-        return res.status(500).send({
-          success: false,
-          message: 'Failed to save recipes!',
-        });
-      }
 
       return res.status(201).send({
         success: true,
@@ -100,7 +65,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'An error occured while saving recipes',
+        message: 'Failed to save recipes!',
       });
     }
   },
@@ -125,8 +90,8 @@ const RecipesController = {
       });
     } catch (err) {
       return res.status(500).send({
-        message:
-          err.message || 'Some error occurred while retrieving club details.',
+        success: false,
+        message: 'Some error occurred while retrieving recipe details.',
       });
     }
   },
@@ -134,23 +99,27 @@ const RecipesController = {
   // Update the recipes identified by the parameter
   update: async (req, res) => {
     try {
-      // validate Difficulty if it exist
-      if (req.body.Difficulty) {
-        if ((typeof req.body.Difficulty !== 'number') || (req.body.Difficulty <= 0) || (req.body.Difficulty > 3)) {
-          return res.status(400).send({
-            success: false,
-            message: 'Difficulty field should be a number',
-          });
-        }
+      // check if req body is empty
+      if (Object.keys(req.body).length === 0) {
+        return res.status(400).send({
+          success: false,
+          message: 'field should not be empty',
+        });
       }
-      // validate Vegetarian if it exist
-      if (req.body.Vegetarian) {
-        if (typeof req.body.Vegetarian !== 'boolean') {
-          return res.status(400).send({
-            success: false,
-            message: 'Vegetarian field should be boolean',
-          });
-        }
+
+      // validate difficulty if it exist
+      if ((req.body.difficulty) && ((typeof req.body.difficulty !== 'number') || (req.body.difficulty <= 0) || (req.body.difficulty > 3))) {
+        return res.status(400).send({
+          success: false,
+          message: 'difficulty field should be a number',
+        });
+      }
+      // validate vegetarian if it exist
+      if ((req.body.vegetarian) && (typeof req.body.vegetarian !== 'boolean')) {
+        return res.status(400).send({
+          success: false,
+          message: 'vegetarian field should be boolean',
+        });
       }
 
       const { id } = req.params;
@@ -167,21 +136,14 @@ const RecipesController = {
       const recipesDetail = req.body;
       // Find recipe and update it with the request body
       const recipes = await Recipes.fetchByIdAndUpdate(id, recipesDetail);
-      if (!recipes) {
-        return res.status(500).send({
-          success: false,
-          message: 'Recipe update failed',
-        });
-      }
       return res.status(200).send({
         success: true,
         data: recipes,
       });
     } catch (err) {
-      console.log(err);
       return res.status(500).send({
         success: false,
-        message: 'An error occured while updating recipes',
+        message: 'An error occured while updating recipe',
       });
     }
   },
@@ -193,19 +155,14 @@ const RecipesController = {
       const { id } = req.params;
 
       // Find recipe and delete
+      // eslint-disable-next-line no-unused-vars
       const recipes = await Recipes.fetchByIdAndDelete(id);
-      if (!recipes) {
-        return res.status(400).send({
-          success: false,
-          message: 'Invalid ID',
-        });
-      }
+
       return res.status(200).send({
         success: true,
         message: 'Recipe successfully deleted',
       });
     } catch (err) {
-      console.log(err);
       return res.status(500).send({
         success: false,
         message: 'An error occured while deleting recipe',

@@ -2,33 +2,28 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
-
-require('dotenv');
-
 const routes = require('./routes/index.js');
 
-const server = express();
+const initializeApp = () => {
 
-// add other middleware
-server.use(cors());
-server.use(morgan('dev'));
+    const app = express();
 
-// parse application/x-www-form-urlencoded
-server.use(bodyParser.urlencoded({ extended: false }));
+    // add other middleware
+    app.use(cors());
+    app.use(morgan('dev'));
 
-// parse application/json
-server.use(bodyParser.json());
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ extended: false }));
 
-server.use('/', routes);
+    // parse application/json
+    app.use(bodyParser.json());
 
-const config = {
-  port: process.env.PORT || 8080,
-};
+    app.use('/', routes);
 
-server.use(express.static('public'));
+    return app;
+}
 
-server.listen(config.port, () => {
-  console.log('Express server listening on port', config.port);
-});
+const app = initializeApp()
 
-module.exports = server;
+
+module.exports = app;

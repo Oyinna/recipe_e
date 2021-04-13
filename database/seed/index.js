@@ -18,34 +18,34 @@ const users = [
 
 const recipes = [
   {
-    Name: 'Chicken Nuggets',
-    PrepTime: new Date(),
-    Difficulty: 1,
-    Vegetarian: true,
+    name: 'Chicken Nuggets',
+    prepTime: new Date(),
+    difficulty: 1,
+    vegetarian: true,
   },
   {
-    Name: 'Chicken Nuggets',
-    PrepTime: new Date(),
-    Difficulty: 1,
-    Vegetarian: false,
+    name: 'Chicken Nuggets',
+    prepTime: new Date(),
+    difficulty: 1,
+    vegetarian: false,
   },
   {
-    Name: 'Jollof Rice',
-    PrepTime: new Date(),
-    Difficulty: 2,
-    Vegetarian: false,
+    name: 'Jollof Rice',
+    prepTime: new Date(),
+    difficulty: 2,
+    vegetarian: false,
   },
   {
-    Name: 'Meat pie',
-    PrepTime: new Date(),
-    Difficulty: 3,
-    Vegetarian: false,
+    name: 'Meat pie',
+    prepTime: new Date(),
+    difficulty: 3,
+    vegetarian: false,
   },
   {
-    Name: 'Vegetable soup',
-    PrepTime: new Date(),
-    Difficulty: 1,
-    Vegetarian: true,
+    name: 'Vegetable soup',
+    prepTime: new Date(),
+    difficulty: 1,
+    vegetarian: true,
   },
 ];
 
@@ -78,3 +78,5 @@ const rollback = async () => {
 const isRollback = process.argv[2] === '--rollback';
 if (isRollback) rollback().then(console.log).catch(console.log).finally(() => process.exit(0));
 else seed().then(console.log).catch(console.log).finally(() => process.exit(0));
+
+
